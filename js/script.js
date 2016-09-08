@@ -41,7 +41,9 @@ function loadData() {
                 article.innerHTML += anchor + paragraph;
                 nytElem.appendChild(article);
             })
-        });
+        }, function () {
+            nytHeaderElem.innerText = "New York Times Articles Could Not Be Loaded";
+        }, "#nytimes-loader");
 
     }
     return false;
@@ -52,16 +54,20 @@ document.querySelector("#form-container").addEventListener("submit", function(ev
     loadData();
 });
 
-function myAjax(url, handle) {
+function myAjax(url, handle_success, handle_error, loader) {
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            document.querySelector(loader).style.display = "none";
             if (httpRequest.status === 200) {
                 var response = JSON.parse(httpRequest.responseText);
-                handle(response);
+                handle_success(response);
             } else {
-                console.warn('There was a problem with the request.');
+                handle_error();
+                // console.warn('There was a problem with the request.');
             }
+        } else if (httpRequest.readyState === XMLHttpRequest.LOADING) {
+            document.querySelector(loader).style.display = "block";
         }
     };
     httpRequest.open("GET", url);
