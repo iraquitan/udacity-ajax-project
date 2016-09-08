@@ -36,7 +36,7 @@ function loadData() {
             response.response.docs.forEach(function (nytDoc) {
                 var article = document.createElement("li");
                 article.classList.add("article");
-                var anchor = '<a href=' + nytDoc.web_url + '>' + nytDoc.headline.main + '</a>';
+                var anchor = '<a href="' + nytDoc.web_url + '" target=_blank rel="noopener noreferrer">' + nytDoc.headline.main + '</a>';
                 var paragraph = '<p>' + nytDoc.snippet + '</p>';
                 article.innerHTML += anchor + paragraph;
                 nytElem.appendChild(article);
