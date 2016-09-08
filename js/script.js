@@ -30,28 +30,18 @@ function loadData() {
 
         // NYTimes AJAX request
         var nytUrl = "https://api.nytimes.com/svc/search/v2/" +
-            "articlesearch.json" + "?api-key=fd76bf1bec3441f7867a940882a272ce" +
+            "articlesearch.json" + "?api-key=YOUR_API_KEY" +
             "&q=" + cityStr + "&sort=newest";
-        var httpRequest = new XMLHttpRequest();
-        httpRequest.onreadystatechange = function () {
-            if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                if (httpRequest.status === 200) {
-                    var response = JSON.parse(httpRequest.responseText);
-                    response.response.docs.forEach(function (nytDoc) {
-                        var article = document.createElement("li");
-                        article.classList.add("article");
-                        var anchor = '<a href=' + nytDoc.web_url + '>' + nytDoc.headline.main + '</a>';
-                        var paragraph = '<p>' + nytDoc.snippet + '</p>';
-                        article.innerHTML += anchor + paragraph;
-                        nytElem.appendChild(article);
-                    })
-                } else {
-                    console.warn('There was a problem with the request.');
-                }
-            }
-        };
-        httpRequest.open("GET", nytUrl);
-        httpRequest.send();
+        myAjax(nytUrl, function (response) {
+            response.response.docs.forEach(function (nytDoc) {
+                var article = document.createElement("li");
+                article.classList.add("article");
+                var anchor = '<a href=' + nytDoc.web_url + '>' + nytDoc.headline.main + '</a>';
+                var paragraph = '<p>' + nytDoc.snippet + '</p>';
+                article.innerHTML += anchor + paragraph;
+                nytElem.appendChild(article);
+            })
+        });
 
     }
     return false;
@@ -61,3 +51,19 @@ document.querySelector("#form-container").addEventListener("submit", function(ev
     event.preventDefault();
     loadData();
 });
+
+function myAjax(url, handle) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                var response = JSON.parse(httpRequest.responseText);
+                handle(response);
+            } else {
+                console.warn('There was a problem with the request.');
+            }
+        }
+    };
+    httpRequest.open("GET", url);
+    httpRequest.send();
+}
