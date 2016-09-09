@@ -48,13 +48,19 @@ function loadData() {
 
         // Wikipedia AJAX request
         var wikiUrl = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + cityStr + "&format=json&callback=wikiCallback";
+        setTimeout(window.wikiCallback, 8000, "");
         window.wikiCallback = function(data) {
-            for (var i = 0; i < data[1].length; i++) {
-                var article = document.createElement("li");
-                article.classList.add("article");
-                var anchor = '<a href="' + data[3][i] + '" target=_blank rel="noopener noreferrer">' + data[1][i] + '</a>';
-                article.innerHTML += anchor;
-                wikiElem.appendChild(article);
+            if (data !== "") {
+                for (var i = 0; i < data[1].length; i++) {
+                    var article = document.createElement("li");
+                    article.classList.add("article");
+                    var anchor = '<a href="' + data[3][i] + '" target=_blank rel="noopener noreferrer">' + data[1][i] + '</a>';
+                    article.innerHTML += anchor;
+                    wikiElem.appendChild(article);
+                }
+                clearTimeout(window.wikiCallback);
+            } else {
+                wikiHeaderElem.innerText = "Wikipedia Links Could Not Be Loaded";
             }
         };
         var scriptEl = document.createElement('script');
