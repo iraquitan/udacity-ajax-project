@@ -1,6 +1,7 @@
 
 function loadData() {
     var body = document.querySelector('body');
+    var wikiHeaderElem = document.querySelector('#wikipedia-header');
     var wikiElem = document.querySelector("#wikipedia-links");
     var nytHeaderElem = document.querySelector('#nytimes-header');
     var nytElem = document.querySelector('#nytimes-articles');
@@ -45,6 +46,20 @@ function loadData() {
             nytHeaderElem.innerText = "New York Times Articles Could Not Be Loaded";
         }, "#nytimes-loader");
 
+        // Wikipedia AJAX request
+        var wikiUrl = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + cityStr + "&format=json&callback=wikiCallback";
+        window.wikiCallback = function(data) {
+            for (var i = 0; i < data[1].length; i++) {
+                var article = document.createElement("li");
+                article.classList.add("article");
+                var anchor = '<a href="' + data[3][i] + '" target=_blank rel="noopener noreferrer">' + data[1][i] + '</a>';
+                article.innerHTML += anchor;
+                wikiElem.appendChild(article);
+            }
+        };
+        var scriptEl = document.createElement('script');
+        scriptEl.setAttribute('src', wikiUrl);
+        document.body.appendChild(scriptEl);
     }
     return false;
 }
